@@ -1,19 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
+use App\Services\ReportingService;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/generate-report', function () {
-    Artisan::call('report:generate');
-    $output = Artisan::output();
+Route::get('/generate-report', function (ReportingService $reportingService) {
+    $result = $reportingService->run();
     
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Report generation triggered.',
-        'output' => $output
-    ]);
+    return response()->json($result);
 });

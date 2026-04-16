@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\GHLService;
 use App\Services\ExcelReportService;
+use App\Services\ReportingService;
 use Illuminate\Console\Command;
 
 class ReportGenerate extends Command
@@ -25,39 +26,15 @@ class ReportGenerate extends Command
     /**
      * Execute the console command.
      */
-    public function handle(GHLService $ghlService, ExcelReportService $excelService)
+    public function handle(ReportingService $reportingService)
     {
-        $this->info('Starting GHL Opportunity Report generation...');
-
-        $pipelineIds = [
-            'LqHQuHXIAegdio77yaNN',
-            'eP52vVtDMYpswKF5C9XO',
-            'u1DDrPskc0ZOToPgcpOJ'
-        ];
+        $this->info('Starting GHL Opportunity Report generation via Service...');
 
         try {
-            // 1. Fetch Opportunities
-            $this->info('Fetching opportunities from GHL (Search API)...');
-            $opportunities = $ghlService->fetchOpportunities($pipelineIds);
+            $result = $reportingService->run();
             
-            if ($opportunities->isEmpty()) {
-                $this->warn('No opportunities found for the specified pipelines.');
-            }
-
-            // 2. Map to Buckets
-            $this->info('Categorizing opportunities...');
-            $buckets = $ghlService->mapToBuckets($opportunities);
-
-            // 3. Generate XLS Report
-            $this->info('Generating Excel report...');
-            $report = $excelService->generateReport($buckets);
-            $this->info("Report generated: {$report['url']}");
-
-            // 4. Notify Webhook
-            $totalCount = count($buckets['Inbound']) + count($buckets['Meetings']) + count($buckets['Deals']);
-            $this->info("Notifying webhook with total count: {$totalCount}");
-            $ghlService->notifyWebhook($totalCount, $report['url'], $report['date']);
-
+            $this->info("Report generated: {$result['report_url']}");
+            $this->info("Total opportunities: {$result['total_opportunities']}");
             $this->info('Report generated and webhook notified successfully!');
         } catch (\Exception $e) {
             $this->error('An error occurred during report generation: ' . $e->getMessage());
