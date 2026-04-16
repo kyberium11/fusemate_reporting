@@ -34,3 +34,4 @@ debug_500.php
 remote_index_debug.php
 reporting.zip
 v.php
+/public/reports/*.xlsx
