@@ -25,7 +25,7 @@ class GHLService
         $allOpportunities = collect();
 
         foreach ($pipelineIds as $pipelineId) {
-            $response = Http::withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Version' => '2021-07-28',
             ])->get("{$this->baseUrl}/opportunities/search", [

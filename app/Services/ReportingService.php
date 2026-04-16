@@ -18,6 +18,10 @@ class ReportingService
      */
     public function run()
     {
+        // Increase limits for this heavy process
+        set_time_limit(300); // 5 minutes
+        ini_set('memory_limit', '512M');
+
         $pipelineIds = [
             'LqHQuHXIAegdio77yaNN',
             'eP52vVtDMYpswKF5C9XO',
