@@ -6,7 +6,7 @@
  */
 
 // 1. Define paths
-$rootPath = __DIR__;
+$rootPath = dirname(__DIR__);
 $cachePath = $rootPath . '/bootstrap/cache';
 
 echo "<h1>Laravel Emergency Cache Clear</h1>";
